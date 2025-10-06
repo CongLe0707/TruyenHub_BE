@@ -1,4 +1,4 @@
-package com.example.TruyenHub.infras.repo;
+package com.example.TruyenHub.outfras.repo;
 
 import com.example.TruyenHub.model.entity.Category;
 import com.example.TruyenHub.model.entity.Story;

@@ -1,4 +1,4 @@
-package com.example.TruyenHub.infras.repo;
+package com.example.TruyenHub.outfras.repo;
 
 import com.example.TruyenHub.model.entity.ChapterComic;
 import com.example.TruyenHub.model.entity.ChapterImage;

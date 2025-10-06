@@ -1,5 +1,6 @@
 package com.example.TruyenHub.model.entity;
 
+import com.example.TruyenHub.anotation.DatePattern;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

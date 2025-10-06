@@ -22,11 +22,14 @@ public class User {
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "UUID")
     private UUID id;
 
-    @Column(name = "user_name", nullable = false, unique = true, length = 60)
+    @Column(name = "user_name", nullable = false, length = 60)
     private String userName;
 
-    @Column(name = "email",nullable = false, unique = true)
+    @Column(name = "email",nullable = false)
     private String email;
+
+    @Column(name = "number_phone",nullable = false)
+    private String numberPhone;
 
     @Column(name = "password", nullable = false)
     private String password;

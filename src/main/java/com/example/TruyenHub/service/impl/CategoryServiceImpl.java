@@ -5,7 +5,7 @@ import com.example.TruyenHub.dto.req.CommonReq;
 import com.example.TruyenHub.dto.req.EditCategoryReq;
 import com.example.TruyenHub.dto.res.CategoryRes;
 import com.example.TruyenHub.exception.DelegationServiceException;
-import com.example.TruyenHub.infras.repo.CategoryRepository;
+import com.example.TruyenHub.outfras.repo.CategoryRepository;
 import com.example.TruyenHub.mapper.CategoryMapper;
 import com.example.TruyenHub.model.entity.Category;
 import com.example.TruyenHub.model.enums.ResultCode;

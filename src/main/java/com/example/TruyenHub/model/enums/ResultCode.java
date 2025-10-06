@@ -19,7 +19,8 @@ public enum ResultCode implements IResultCode{
     DUPLICATE_IMAGE("416", "Ảnh đã tồn tại hoặc bị trùng lặp"),
     DUPLICATE_CHAPTER_NAME("417", "Tên chapter đã tồn tại" ),
     NO_COMIC_ID("418","Tìm không thấy truyện tranh"),
-    NO_CHAPTER_COMIC("419", "Tìm không thấy chapter");
+    NO_CHAPTER_COMIC("419", "Tìm không thấy chapter"),
+    USER_NAME("418","User đã tồn tại");
 
 
     private String code;
