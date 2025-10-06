@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -61,27 +63,33 @@ public class UserServiceImpl implements UserService {
                         ResultCode.USER_NOT_FOUND.getMessage()
                 ));
 
-        if(!passwordEncoder.matches(data.password(), user.getPassword())) {
+        if (!passwordEncoder.matches(data.password(), user.getPassword())) {
             throw new DelegationServiceException(
                     ResultCode.USER_NOT_FOUND.getCode(),
                     ResultCode.USER_NOT_FOUND.getMessage()
             );
         }
 
-        String accessToken = JwtUtils.generateAccessToken(user.getUserName(), Constants.ACCESS_TOKEN_TTL_SECONDS);
-        String refreshTokenStr = JwtUtils.generateRefreshToken(user.getUserName(),Constants.REFRESH_TOKEN_TTL_SECONDS);
+        RefreshToken refreshToken = createAndSaveRefreshToken(user);
+
+        return new LoginRes(
+                JwtUtils.generateAccessToken(user.getUserName(), Constants.ACCESS_TOKEN_TTL_SECONDS),
+                refreshToken.getToken());
+    }
+
+
+    private RefreshToken createAndSaveRefreshToken(User user) {
+        String refreshTokenStr = JwtUtils.generateRefreshToken(user.getUserName(), Constants.REFRESH_TOKEN_TTL_SECONDS);
 
         refreshTokenRepository.deleteAllByUser(user);
+
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setToken(refreshTokenStr);
-        refreshToken.setExpiresAt(java.time.LocalDateTime.now().plusSeconds(Constants.REFRESH_TOKEN_TTL_SECONDS));
+        refreshToken.setExpiresAt(LocalDateTime.now().plusSeconds(Constants.REFRESH_TOKEN_TTL_SECONDS));
         refreshToken.setRevoked(false);
-        refreshTokenRepository.save(refreshToken);
 
-        return new LoginRes(
-                accessToken,
-                refreshTokenStr
-        );
+        return refreshTokenRepository.save(refreshToken);
     }
+
 }
