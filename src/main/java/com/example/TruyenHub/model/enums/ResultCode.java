@@ -20,7 +20,8 @@ public enum ResultCode implements IResultCode{
     DUPLICATE_CHAPTER_NAME("417", "Tên chapter đã tồn tại" ),
     NO_COMIC_ID("418","Tìm không thấy truyện tranh"),
     NO_CHAPTER_COMIC("419", "Tìm không thấy chapter"),
-    USER_NAME("418","User đã tồn tại");
+    USER_NAME("418","User đã tồn tại"),
+    USER_NOT_FOUND("418","Bạn đã nhập sai tài khoản hoặc mật khẩu" );
 
 
     private String code;
