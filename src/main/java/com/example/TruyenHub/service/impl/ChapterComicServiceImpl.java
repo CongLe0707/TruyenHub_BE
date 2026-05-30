@@ -39,6 +39,7 @@ public class ChapterComicServiceImpl implements ChapterComicService {
     private String uploadDir;
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public CreateChapterComicRes createChapterComic(CommonReq<CreateChapterComicReq> req) {
         CreateChapterComicReq data = req.getData();
 
@@ -121,17 +122,9 @@ public class ChapterComicServiceImpl implements ChapterComicService {
 
     private List<ChapterImage> buildImages(MultipartFile[] files, ChapterComic chapter, UUID comicId, Integer chapterNumber) {
         List<ChapterImage> images = new ArrayList<>();
-        Set<String> uploadedNames = new HashSet<>();
         for (int i = 0; i < files.length; i++) {
             try {
                 MultipartFile file = files[i];
-
-                if (!uploadedNames.add(file.getOriginalFilename())) {
-                    throw new DelegationServiceException(
-                            ResultCode.DUPLICATE_IMAGE.getCode(),
-                            ResultCode.DUPLICATE_IMAGE.getMessage()
-                    );
-                }
                 String folderName = "chapter_comic_" + chapterNumber;
                 String filePath = saveFile(file, folderName, uploadDir);
 

@@ -53,18 +53,16 @@ public class RatingServiceImpl implements RatingService {
                         ResultCode.NO_STORY_NAME.getMessage()
                 ));
 
-        if (storyRatingRepository.existsByUserAndStory(user, story)) {
-            throw new DelegationServiceException(
-                    ResultCode.RATING_COMIC.getCode(),
-                    ResultCode.RATING_COMIC.getMessage() // "Bạn đã đánh giá rồi"
-            );
-        }
-
-        StoryRating rating = new StoryRating();
-        rating.setUser(user);
-        rating.setStory(story);
+        StoryRating rating = storyRatingRepository.findByUserAndStory(user, story)
+                .orElseGet(() -> {
+                    StoryRating newRating = new StoryRating();
+                    newRating.setUser(user);
+                    newRating.setStory(story);
+                    newRating.setCreatedAt(LocalDateTime.now());
+                    return newRating;
+                });
+        
         rating.setRating(data.rating());
-        rating.setCreatedAt(LocalDateTime.now());
         storyRatingRepository.save(rating);
 
         Float avg = storyRatingRepository.getAverageRatingByStory(story);
@@ -86,18 +84,16 @@ public class RatingServiceImpl implements RatingService {
                         ResultCode.NO_COMIC_ID.getMessage()
                 ));
 
-        if (comicRatingRepository.existsByUserAndComic(user, comic)) {
-            throw new DelegationServiceException(
-                    ResultCode.RATING_COMIC.getCode(),
-                    ResultCode.RATING_COMIC.getMessage()
-            );
-        }
-
-        ComicRating rating = new ComicRating();
-        rating.setUser(user);
-        rating.setComic(comic);
+        ComicRating rating = comicRatingRepository.findByUserAndComic(user, comic)
+                .orElseGet(() -> {
+                    ComicRating newRating = new ComicRating();
+                    newRating.setUser(user);
+                    newRating.setComic(comic);
+                    newRating.setCreatedAt(LocalDateTime.now());
+                    return newRating;
+                });
+        
         rating.setRating(data.rating());
-        rating.setCreatedAt(LocalDateTime.now());
         comicRatingRepository.save(rating);
 
         Float avg = comicRatingRepository.getAverageRatingByComic(comic);

@@ -37,7 +37,6 @@ public class Comic {
 //    @Column(name = "status", length = 20, nullable = false)
 //    private StoryStatus status;
 
-    @DatePattern
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

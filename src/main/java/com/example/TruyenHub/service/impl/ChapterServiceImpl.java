@@ -39,6 +39,14 @@ public class ChapterServiceImpl implements ChapterService {
         Chapter chapter = chapterMapper.toEntity(data);
         chapter.setStory(story);
 
+        // Chuẩn hóa Unicode (từ Tổ hợp NFD sang Dựng sẵn NFC) để fix lỗi font Tiếng Việt
+        if (chapter.getContent() != null) {
+            chapter.setContent(java.text.Normalizer.normalize(chapter.getContent(), java.text.Normalizer.Form.NFC));
+        }
+        if (chapter.getTitle() != null) {
+            chapter.setTitle(java.text.Normalizer.normalize(chapter.getTitle(), java.text.Normalizer.Form.NFC));
+        }
+
         Chapter saved = chapterRepository.save(chapter);
 
         return new CreateChapterRes (

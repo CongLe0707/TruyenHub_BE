@@ -24,6 +24,7 @@ public enum ResultCode implements IResultCode{
     NO_USER("420","Tìm không thấy người dùng "),
     ID_NOT_FOUND("42112","Sai thông tin"),
     SUCCESS_RATING("1123","Đánh giá thành công"),
+    CMT_SUCCESS("1223","Bình luận thành công"),
     RATING_COMIC("421","Bạn đã đánh giá rồi" );
 
 

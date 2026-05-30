@@ -113,6 +113,7 @@ public class ComicServiceImpl implements ComicService {
                         comic.getId(),
                         comic.getTitle(),
                         comic.getDescription(),
+                        comic.getCoverImage(),
                         comic.getCategory().getName(),
                         comic.getAuthor().getName(),
                         comic.getAvrRating(),
