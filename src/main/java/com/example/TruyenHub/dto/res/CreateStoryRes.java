@@ -7,8 +7,10 @@ public record CreateStoryRes(
         UUID id,
         String title,
         String description,
-        String categoriName,
+        String coverImage,
+        String categoryName,
         String authorName,
+        Float avrRating,
         LocalDateTime createdAt
 ) {
 }

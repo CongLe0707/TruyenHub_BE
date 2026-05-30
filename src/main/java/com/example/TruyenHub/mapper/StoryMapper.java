@@ -14,5 +14,6 @@ public interface StoryMapper {
     @Mapping(target = "author", ignore = true)            // set sau trong service
     @Mapping(target = "category", ignore = true)          // set sau trong service
     @Mapping(target = "chapter", ignore = true)           // set sau nếu cần
+    @Mapping(target = "coverImage", ignore = true)
     Story toEntity(CreateStoryReq req);
 }

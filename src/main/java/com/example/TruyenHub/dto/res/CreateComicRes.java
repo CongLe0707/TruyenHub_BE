@@ -7,8 +7,9 @@ public record CreateComicRes (
         UUID id,
         String title,
         String description,
-        String categoriName,
+        String categoryName,
         String authorName,
+        Float avrRating,
         LocalDateTime createdAt
 ) {
 }

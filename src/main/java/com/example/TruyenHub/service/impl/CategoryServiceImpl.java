@@ -10,8 +10,11 @@ import com.example.TruyenHub.mapper.CategoryMapper;
 import com.example.TruyenHub.model.entity.Category;
 import com.example.TruyenHub.model.enums.ResultCode;
 import com.example.TruyenHub.service.CategoryService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 
 @Service
@@ -25,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryRes createCategory(CommonReq<CategoryReq> req) {
         CategoryReq data = req.getData();
 
-        Category category = categoryRepository.save( categoryMapper.toEntity(data));
+        Category category = categoryRepository.save(categoryMapper.toEntity(data));
             return new CategoryRes(
                     category.getId(),
                     category.getName(),
@@ -34,23 +37,40 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryRes editCategory(CommonReq<EditCategoryReq> req) {
         EditCategoryReq data = req.getData();
 
-        Category category = categoryRepository.findById(data.id())
-                .orElseThrow(() -> new DelegationServiceException(
-                        ResultCode.ID_NOT_FOUND.getCode(),
-                        ResultCode.ID_NOT_FOUND.getMessage().formatted(data.id())
-                ));
-
+        Category category = retriveCategory(data.id());
         category.setName(data.name());
         category.setDescription(data.description());
-        Category save = categoryRepository.save(category);
 
-        return  new CategoryRes(
-                save.getId(),
-                save.getName(),
-                save.getDescription()
+        return new CategoryRes(
+                category.getId(),
+                category.getName(),
+                category.getDescription()
         );
+    }
+
+    private Category retriveCategory(UUID id) {
+     return categoryRepository.findById(id)
+             .orElseThrow(() -> new DelegationServiceException(
+                     ResultCode.ID_NOT_FOUND.getCode(),
+                     ResultCode.ID_NOT_FOUND.getMessage().formatted(id)
+             ));
+    }
+
+    @Override
+    @Transactional
+    public void deleteCategory(UUID id) {
+        Category category = retriveCategory(id);
+        categoryRepository.delete(category);
+    }
+
+    @Override
+    public java.util.List<CategoryRes> listCategory() {
+        return categoryRepository.findAll().stream()
+                .map(category -> new CategoryRes(category.getId(), category.getName(), category.getDescription()))
+                .toList();
     }
 }

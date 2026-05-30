@@ -60,3 +60,4 @@ public class ExceptionController {
         return ApiHandler.badRequest(new CommonRes<>(exception.getErrCode(), exception.getMessage()));
     }
 }
+

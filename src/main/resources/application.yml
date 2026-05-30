@@ -23,4 +23,7 @@ spring:
       password: ${REDIS_PASSWORD:}
 
 file:
-  upload-dir: uploads/ChapterComic
+  upload-dir: ${UPLOAD_DIR:uploads}
+  upload-path: ${UPLOAD_PATH:uploads}
+  upload:
+    base-path: ${UPLOAD_BASE_PATH:uploads}

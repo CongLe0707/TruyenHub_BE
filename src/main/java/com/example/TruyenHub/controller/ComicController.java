@@ -23,7 +23,6 @@ public class ComicController {
         return ApiHandler.handle(new CommonReq<>(req), comicService::createComic);
     }
 
-
     @GetMapping("/detail/{comicId}")
     public ResponseEntity<CommonRes> getComicDetail(@PathVariable UUID comicId) {
         return ApiHandler.handle(null, req -> comicService.detailComic(comicId));
@@ -34,4 +33,16 @@ public class ComicController {
         return ApiHandler.handle(null,req -> comicService.listComic());
     }
 
+    @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CommonRes> editComic(@ModelAttribute com.example.TruyenHub.dto.req.EditComicReq req) {
+        return ApiHandler.handle(new CommonReq<>(req), comicService::editComic);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<CommonRes> deleteComic(@PathVariable UUID id) {
+        return ApiHandler.handle(new CommonReq<>(), req -> {
+            comicService.deleteComic(id);
+            return "Deleted successfully";
+        });
+    }
 }

@@ -15,19 +15,13 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/chapter_comic")
+@RequestMapping("/api/chapterComic")
 public class ChapterComicController {
     private final ChapterComicService chapterComicService;
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CommonRes> createChapterComic(
-            @RequestParam String comicName,
-            @RequestParam String title,
-            @RequestParam Integer chapterNumber,
-            @RequestParam("imageUrls") MultipartFile[] files
-    ) {
-        CreateChapterComicReq data = new CreateChapterComicReq(comicName, title, chapterNumber, files);
-        return ApiHandler.handle(new CommonReq<>(data), chapterComicService::createChapterComic);
+    public ResponseEntity<CommonRes> createChapterComic(@ModelAttribute CreateChapterComicReq req) {
+        return ApiHandler.handle(new CommonReq<>(req), chapterComicService::createChapterComic);
     }
 
     @GetMapping("/detail/{chapterId}")
@@ -37,3 +31,4 @@ public class ChapterComicController {
 
 
 }
+

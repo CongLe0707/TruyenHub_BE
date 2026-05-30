@@ -34,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RegisterUserRes registerUser(CommonReq<RegisterUserReq> req) {
+
         RegisterUserReq data = req.getData();
 
         if (userRepository.findByUserName(data.userName()).isPresent()) {
@@ -47,8 +48,8 @@ public class UserServiceImpl implements UserService {
 
         return new RegisterUserRes (
                 user.getUserName(),
-                user.getNumberPhone(),
-                user.getEmail()
+                user.getEmail(),
+                user.getNumberPhone()
         );
     }
 
@@ -69,12 +70,13 @@ public class UserServiceImpl implements UserService {
                     ResultCode.USER_NOT_FOUND.getMessage()
             );
         }
-
         RefreshToken refreshToken = createAndSaveRefreshToken(user);
 
         return new LoginRes(
                 JwtUtils.generateAccessToken(user.getUserName(), Constants.ACCESS_TOKEN_TTL_SECONDS),
-                refreshToken.getToken());
+                refreshToken.getToken(),
+                user.getRole().name()
+        );
     }
 
 

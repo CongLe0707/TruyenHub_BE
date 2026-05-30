@@ -1,5 +1,6 @@
 package com.example.TruyenHub.model.entity;
 
+import com.example.TruyenHub.anotation.DatePattern;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,9 +15,9 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Comic {
+
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "UUID")
     private UUID id;
 
@@ -29,10 +30,14 @@ public class Comic {
     @Column(name = "cover_image", length = 255)
     private String coverImage;
 
+    @Column(name = "rating")
+    private Float  avrRating;
+
 //    @Enumerated(EnumType.STRING)
 //    @Column(name = "status", length = 20, nullable = false)
 //    private StoryStatus status;
 
+    @DatePattern
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -50,7 +55,7 @@ public class Comic {
     private Author author;
 
 
-    @OneToMany(mappedBy = "comic", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "comic", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ChapterComic> chapterComics;
 
 //    @Enumerated(EnumType.STRING)

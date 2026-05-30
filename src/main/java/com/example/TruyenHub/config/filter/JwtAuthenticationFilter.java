@@ -1,4 +1,4 @@
-package com.example.TruyenHub.security;
+package com.example.TruyenHub.config.filter;
 
 import com.example.TruyenHub.model.entity.User;
 import com.example.TruyenHub.outfras.repo.UserRepository;
@@ -33,7 +33,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
-                if (!blacklistService.isBlacklisted(token)) {
+                boolean blacklisted = false;
+                try {
+                    blacklisted = blacklistService.isBlacklisted(token);
+                } catch (Exception e) {
+                    System.err.println("Redis connection failed, skipping blacklist check.");
+                }
+                if (!blacklisted) {
                     String username = JwtUtils.extractSubject(token);
                     userRepository.findByUserName(username).ifPresent(user -> setAuth(user));
                 }

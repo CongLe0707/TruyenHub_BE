@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
     private final CategoryService categoryService;
 
+
     @PostMapping("/create")
     public ResponseEntity<CommonRes> createCategory(@RequestBody CommonReq<CategoryReq> req) {
 
@@ -25,6 +26,19 @@ public class CategoryController {
     public ResponseEntity<CommonRes> editCategory (@RequestBody CommonReq<EditCategoryReq> req) {
 
         return  ApiHandler.handle(req,categoryService::editCategory);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<CommonRes> listCategory() {
+        return ApiHandler.handle(null, req -> categoryService.listCategory());
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<CommonRes> deleteCategory(@PathVariable java.util.UUID id) {
+        return ApiHandler.handle(new CommonReq<>(), req -> {
+            categoryService.deleteCategory(id);
+            return "Deleted successfully";
+        });
     }
 
 

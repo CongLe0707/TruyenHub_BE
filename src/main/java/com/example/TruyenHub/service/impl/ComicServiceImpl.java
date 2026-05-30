@@ -2,6 +2,7 @@ package com.example.TruyenHub.service.impl;
 
 import com.example.TruyenHub.dto.req.CommonReq;
 import com.example.TruyenHub.dto.req.CreateComicReq;
+import com.example.TruyenHub.dto.res.CategoryRes;
 import com.example.TruyenHub.dto.res.DetailComicRes;
 import com.example.TruyenHub.dto.res.CreateComicRes;
 import com.example.TruyenHub.dto.res.ListComicRes;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static com.example.TruyenHub.utils.ImgUtils.saveFile;
+
 @Service
 @RequiredArgsConstructor
 public class ComicServiceImpl implements ComicService {
@@ -45,48 +48,42 @@ public class ComicServiceImpl implements ComicService {
 
     @Override
     public CreateComicRes createComic(CommonReq<CreateComicReq> req) {
+
+
+
+
         CreateComicReq data = req.getData();
-        Author author = authorRepository.findByName(data.authorName())
-                .orElseThrow(() -> new DelegationServiceException(
-                        ResultCode.NO_AUTHOR.getCode(),
-                        ResultCode.NO_AUTHOR.getMessage())
-                );
-        Category category = categoryRepository.findByName(data.categoriName())
-                .orElseThrow(() -> new DelegationServiceException(
-                        ResultCode.NO_CATEGORY.getCode(),
-                        ResultCode.NO_CATEGORY.getMessage())
-                );
+
+        Author author = retriveAuthor(data.authorName());
+
+        Category category = retriveCategory(data.categoryName());
+
         Comic comic = comicMapper.toEntity(data);
 
-        comic.setAuthor(author);
-        comic.setCategory(category);
-        comic.setCreatedAt(LocalDateTime.now());
-        comic.setUpdatedAt(LocalDateTime.now());
+        updateAuthor(comic, author, category);
 
         ComicCoverImage(comic, data.coverImage());
 
-        Comic saved = comicRepository.save(comic);
+        comicRepository.save(comic);
         return new CreateComicRes(
-                saved.getId(),
-                saved.getTitle(),
-                saved.getDescription(),
-                saved.getCategory().getName(),
-                saved.getAuthor().getName(),
-                saved.getCreatedAt()
+                comic.getId(),
+                comic.getTitle(),
+                comic.getDescription(),
+                comic.getCategory().getName(),
+                comic.getAuthor().getName(),
+                comic.getAvrRating(),
+                comic.getCreatedAt()
 
         );
+
     }
 
 //Chi tiết truyện
-    @Transactional
     @Override
+    @Transactional
     public DetailComicRes detailComic(UUID comicId) {
 
-        Comic comic = comicRepository.findById(comicId)
-                .orElseThrow(() -> new DelegationServiceException(
-                        ResultCode.NO_COMIC_ID.getCode(),
-                        ResultCode.NO_COMIC_ID.getMessage())
-                );
+        Comic comic = retriveComic(comicId);
 
         return new DetailComicRes(
                 comic.getId(),
@@ -95,6 +92,7 @@ public class ComicServiceImpl implements ComicService {
                 comic.getCoverImage(),
                 comic.getCategory().getName(),
                 comic.getAuthor().getName(),
+                comic.getAvrRating(),
                 comic.getCreatedAt(),
                 comic.getChapterComics().stream()
                         .map(ch -> new DetailComicRes.ChapterComicDto(
@@ -117,32 +115,20 @@ public class ComicServiceImpl implements ComicService {
                         comic.getDescription(),
                         comic.getCategory().getName(),
                         comic.getAuthor().getName(),
+                        comic.getAvrRating(),
                         comic.getCreatedAt()
                 ))
                 .toList();
         return new ListComicRes(comicDtos);
     }
 
-    private String saveFile(MultipartFile file, String folderName) throws IOException {
-        Path folderPath = Paths.get(uploadDir, folderName);
-        if (!Files.exists(folderPath)) {
-            Files.createDirectories(folderPath);
-        }
 
-        String fileName = UUID.randomUUID() + "_" + Objects.requireNonNull(file.getOriginalFilename());
-        Path filePath = folderPath.resolve(fileName);
-
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        // Trả về relative path (để dùng API load ảnh tĩnh)
-        return "/uploads/ComicCoverImage/" + folderName + "/" + fileName;
-    }
 
     private void ComicCoverImage(Comic comic, MultipartFile coverImage) {
         if (coverImage != null && !coverImage.isEmpty()) {
             try {
-                String filePath = saveFile(coverImage, "Comic");
-                comic.setCoverImage(filePath);
+                String filePath = saveFile(coverImage, "Comic", uploadDir);
+                comic.setCoverImage(filePath); //?
             } catch (IOException e) {
                 throw new RuntimeException("Lỗi lưu ảnh bìa: " + coverImage.getOriginalFilename(), e);
             }
@@ -150,5 +136,73 @@ public class ComicServiceImpl implements ComicService {
     }
 
 
+    private Author retriveAuthor(String author) {
+         return authorRepository.findByName(author)
+                .orElseThrow(() -> new DelegationServiceException(
+                        ResultCode.NO_AUTHOR.getCode(),
+                        ResultCode.NO_AUTHOR.getMessage())
+                );
+    }
+
+    private Category retriveCategory(String categoryName){
+        return categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new DelegationServiceException(
+                        ResultCode.NO_CATEGORY.getCode(),
+                        ResultCode.NO_CATEGORY.getMessage())
+                );
+
+    }
+
+    private void updateAuthor(Comic comic,Author author, Category category) {
+        comic.setAuthor(author);
+        comic.setCategory(category);
+        comic.setCreatedAt(LocalDateTime.now());
+        comic.setUpdatedAt(LocalDateTime.now());
+
+    }
+    
+    private Comic retriveComic(UUID comicId) {
+        return comicRepository.findById(comicId)
+                .orElseThrow(() -> new DelegationServiceException(
+                        ResultCode.NO_COMIC_ID.getCode(),
+                        ResultCode.NO_COMIC_ID.getMessage())
+                );
+    }
+    
+    @Override
+    @Transactional
+    public CreateComicRes editComic(CommonReq<com.example.TruyenHub.dto.req.EditComicReq> req) {
+        com.example.TruyenHub.dto.req.EditComicReq data = req.getData();
+        Comic comic = retriveComic(data.id());
+
+        Author author = retriveAuthor(data.authorName());
+        Category category = retriveCategory(data.categoryName());
+
+        comic.setTitle(data.title());
+        comic.setDescription(data.description());
+        updateAuthor(comic, author, category);
+
+        if (data.coverImage() != null && !data.coverImage().isEmpty()) {
+            ComicCoverImage(comic, data.coverImage());
+        }
+
+        comicRepository.save(comic);
+        return new CreateComicRes(
+                comic.getId(),
+                comic.getTitle(),
+                comic.getDescription(),
+                comic.getCategory().getName(),
+                comic.getAuthor().getName(),
+                comic.getAvrRating(),
+                comic.getCreatedAt()
+        );
+    }
+
+    @Override
+    @Transactional
+    public void deleteComic(UUID id) {
+        Comic comic = retriveComic(id);
+        comicRepository.delete(comic);
+    }
 
 }

@@ -11,8 +11,9 @@ public record ListComicRes (
             UUID id,
             String title,
             String description,
-            String categoriName,
+            String categoryName,
             String authorName,
+            Float avtRating,
             LocalDateTime createdAt
     ) {}
 

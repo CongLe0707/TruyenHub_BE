@@ -8,7 +8,7 @@ public record CreateComicReq (
         String description,
         @JsonIgnore
         MultipartFile coverImage,
-        String categoriName,
+        String categoryName,
         String authorName
 
 ) {

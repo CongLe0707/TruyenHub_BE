@@ -11,6 +11,7 @@ public record DetailComicRes(
         String coverImage,
         String category,
         String author,
+        Float avtRating,
         LocalDateTime createdAt,
         List<ChapterComicDto> chapterComic
 ){

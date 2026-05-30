@@ -16,4 +16,7 @@ public interface ComicService {
 
     ListComicRes listComic();
 
+    CreateComicRes editComic(CommonReq<com.example.TruyenHub.dto.req.EditComicReq> req);
+
+    void deleteComic(UUID id);
 }

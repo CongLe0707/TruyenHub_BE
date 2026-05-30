@@ -9,4 +9,8 @@ public interface CategoryService {
     CategoryRes createCategory (CommonReq<CategoryReq> req);
 
     CategoryRes editCategory (CommonReq<EditCategoryReq> req);
+
+    void deleteCategory (java.util.UUID id);
+
+    java.util.List<CategoryRes> listCategory();
 }

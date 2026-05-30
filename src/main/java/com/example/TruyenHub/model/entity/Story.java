@@ -18,7 +18,6 @@ import java.util.UUID;
 public class Story {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "UUID")
     private UUID id;
 
@@ -30,6 +29,9 @@ public class Story {
 
     @Column(name = "cover_image", length = 255)
     private String coverImage;
+
+    @Column(name = "rating")
+    private Float avrRating;
 
 //    @Enumerated(EnumType.STRING)
 //    @Column(name = "status", length = 20, nullable = false)

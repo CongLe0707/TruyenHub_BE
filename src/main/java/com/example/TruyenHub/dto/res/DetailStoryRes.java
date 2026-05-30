@@ -8,8 +8,10 @@ public record DetailStoryRes (
         UUID id,
         String title,
         String description,
-        String categoriName,
+        String coverImage,
+        String categoryName,
         String authorName,
+        Float avrRating,
         LocalDateTime createdAt,
         List<ChapterStoryDto> chapterStoryDtos
 ) {

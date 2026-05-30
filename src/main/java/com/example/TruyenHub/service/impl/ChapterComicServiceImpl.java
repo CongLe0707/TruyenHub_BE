@@ -14,18 +14,16 @@ import com.example.TruyenHub.model.entity.ChapterImage;
 import com.example.TruyenHub.model.entity.Comic;
 import com.example.TruyenHub.model.enums.ResultCode;
 import com.example.TruyenHub.service.ChapterComicService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+
 import java.util.*;
+
+import static com.example.TruyenHub.utils.ImgUtils.saveFile;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +33,7 @@ public class ChapterComicServiceImpl implements ChapterComicService {
     private final ChapterComicRepository chapterComicRepository;
     private final ComicRepository comicRepository;
     private final ChapterComicMapper chapterComicMapper;
+
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -93,7 +92,6 @@ public class ChapterComicServiceImpl implements ChapterComicService {
 
 
 //Chi tiết chapter comic
-    @Transactional
     @Override
     public ChapterComicDetailRes detailChapterComic(UUID id) {
 
@@ -119,39 +117,23 @@ public class ChapterComicServiceImpl implements ChapterComicService {
         );
     }
 
-    // sử lí hình ảnh
-    private String saveFile(MultipartFile file, String folderName) throws IOException {
-        Path folderPath = Paths.get(uploadDir, folderName);
-        if (!Files.exists(folderPath)) {
-            Files.createDirectories(folderPath);
-        }
 
-        String fileName = UUID.randomUUID() + "_" + Objects.requireNonNull(file.getOriginalFilename());
-        Path filePath = folderPath.resolve(fileName);
-
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        return "/uploads/ChapterComic/" + folderName + "/" + fileName;
-    }
 
     private List<ChapterImage> buildImages(MultipartFile[] files, ChapterComic chapter, UUID comicId, Integer chapterNumber) {
         List<ChapterImage> images = new ArrayList<>();
         Set<String> uploadedNames = new HashSet<>();
-
         for (int i = 0; i < files.length; i++) {
             try {
                 MultipartFile file = files[i];
 
-                // Check duplicate filename trong request
                 if (!uploadedNames.add(file.getOriginalFilename())) {
                     throw new DelegationServiceException(
                             ResultCode.DUPLICATE_IMAGE.getCode(),
                             ResultCode.DUPLICATE_IMAGE.getMessage()
                     );
                 }
-
                 String folderName = "chapter_comic_" + chapterNumber;
-                String filePath = saveFile(file, folderName);
+                String filePath = saveFile(file, folderName, uploadDir);
 
                 // Check duplicate path trong DB
                 if (chapterImageRepository.existsByChapterComicAndImageUrl(chapter, filePath)) {

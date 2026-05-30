@@ -6,10 +6,7 @@ import com.example.TruyenHub.dto.res.CommonRes;
 import com.example.TruyenHub.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,4 +19,8 @@ public class AuthorController {
        return ApiHandler.handle(req,authorService::createAuthor);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<CommonRes> listAuthor() {
+        return ApiHandler.handle(null, req -> authorService.listAuthor());
+    }
 }

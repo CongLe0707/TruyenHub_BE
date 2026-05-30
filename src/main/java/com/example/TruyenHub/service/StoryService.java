@@ -16,4 +16,7 @@ public interface StoryService {
 
     DetailStoryRes detailStory (UUID id);
 
+    CreateStoryRes editStory(CommonReq<com.example.TruyenHub.dto.req.EditStoryReq> req);
+
+    void deleteStory(UUID id);
 }

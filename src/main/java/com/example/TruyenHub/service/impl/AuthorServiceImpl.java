@@ -17,17 +17,19 @@ public  class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
 
-
     @Override
     public AuthorRes createAuthor(CommonReq<AuthorReq> req) {
-        AuthorReq data = req.getData();
-
-        Author author  =  authorRepository.save(authorMapper.toEntity(data));
-
+        Author author  =  authorRepository.save(authorMapper.toEntity(req.getData()));
         return new AuthorRes (
                 author.getId(),
                 author.getName(),
                 author.getBio()
         );
+    }
+    @Override
+    public java.util.List<AuthorRes> listAuthor() {
+        return authorRepository.findAll().stream()
+                .map(author -> new AuthorRes(author.getId(), author.getName(), author.getBio()))
+                .toList();
     }
 }
