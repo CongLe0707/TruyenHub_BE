@@ -41,8 +41,7 @@ public class StoryServiceImpl implements StoryService {
 
 
     @Override
-    public CreateStoryRes createNovel(CommonReq<CreateStoryReq> req) {
-        CreateStoryReq data = req.getData();
+    public CreateStoryRes createNovel(CreateStoryReq data) {
         Author author = authorRepository.findByName(data.authorName())
                 .orElseThrow(() -> new DelegationServiceException(
                         ResultCode.NO_AUTHOR.getCode(),
@@ -138,8 +137,7 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     @jakarta.transaction.Transactional
-    public CreateStoryRes editStory(CommonReq<com.example.TruyenHub.dto.req.EditStoryReq> req) {
-        com.example.TruyenHub.dto.req.EditStoryReq data = req.getData();
+    public CreateStoryRes editStory(com.example.TruyenHub.dto.req.EditStoryReq data) {
         Story story = storyRepository.findById(data.id())
                 .orElseThrow(() -> new DelegationServiceException(
                         ResultCode.NO_STORY_NAME.getCode(),
@@ -180,12 +178,13 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     @jakarta.transaction.Transactional
-    public void deleteStory(UUID id) {
+    public String deleteStory(UUID id) {
         Story story = storyRepository.findById(id)
                 .orElseThrow(() -> new DelegationServiceException(
                         ResultCode.NO_STORY_NAME.getCode(),
                         ResultCode.NO_STORY_NAME.getMessage()
                 ));
         storyRepository.delete(story);
+        return "Deleted successfully";
     }
 }

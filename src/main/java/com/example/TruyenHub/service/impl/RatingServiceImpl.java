@@ -20,7 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.TruyenHub.dto.res.UserRatingRes;
+
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,17 +44,28 @@ public class RatingServiceImpl implements RatingService {
                 ));
     }
 
-    @Override
-    @Transactional
-    public String rateStory(CommonReq<RatingReq> req) {
-        User user = getCurrentUser();
-        RatingReq data = req.getData();
-
-        Story story = storyRepository.findById(data.targetId())
+    private Story retriveStory(UUID id) {
+        return storyRepository.findById(id)
                 .orElseThrow(() -> new DelegationServiceException(
                         ResultCode.NO_STORY_NAME.getCode(),
                         ResultCode.NO_STORY_NAME.getMessage()
                 ));
+    }
+
+    private Comic retriveComic(UUID id) {
+        return comicRepository.findById(id)
+                .orElseThrow(() -> new DelegationServiceException(
+                        ResultCode.NO_COMIC_ID.getCode(),
+                        ResultCode.NO_COMIC_ID.getMessage()
+                ));
+    }
+
+    @Override
+    public String rateStory(CommonReq<RatingReq> req) {
+        User user = getCurrentUser();
+        RatingReq data = req.getData();
+
+        Story story = retriveStory(data.targetId());
 
         StoryRating rating = storyRatingRepository.findByUserAndStory(user, story)
                 .orElseGet(() -> {
@@ -73,17 +87,10 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    @Transactional
     public String rateComic(CommonReq<RatingReq> req) {
         User user = getCurrentUser();
         RatingReq data = req.getData();
-
-        Comic comic = comicRepository.findById(data.targetId())
-                .orElseThrow(() -> new DelegationServiceException(
-                        ResultCode.NO_COMIC_ID.getCode(),
-                        ResultCode.NO_COMIC_ID.getMessage()
-                ));
-
+        Comic comic = retriveComic(data.targetId());
         ComicRating rating = comicRatingRepository.findByUserAndComic(user, comic)
                 .orElseGet(() -> {
                     ComicRating newRating = new ComicRating();
@@ -105,33 +112,23 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional(readOnly = true)
-    public java.util.Map<String, Object> getUserStoryRating(java.util.UUID storyId) {
+    public UserRatingRes getUserStoryRating(UUID storyId) {
         User user = getCurrentUser();
-        Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new DelegationServiceException(
-                        ResultCode.NO_STORY_NAME.getCode(),
-                        ResultCode.NO_STORY_NAME.getMessage()
-                ));
-        java.util.Map<String, Object> result = new java.util.HashMap<>();
-        result.put("averageRating", story.getAvrRating());
-        storyRatingRepository.findByUserAndStory(user, story)
-                .ifPresent(r -> result.put("userRating", r.getRating()));
-        return result;
+        Story story = retriveStory(storyId);
+        Float userRating = storyRatingRepository.findByUserAndStory(user, story)
+                .map(StoryRating::getRating)
+                .orElse(null);
+        return new UserRatingRes(story.getAvrRating(), userRating);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public java.util.Map<String, Object> getUserComicRating(java.util.UUID comicId) {
+    public UserRatingRes getUserComicRating(UUID comicId) {
         User user = getCurrentUser();
-        Comic comic = comicRepository.findById(comicId)
-                .orElseThrow(() -> new DelegationServiceException(
-                        ResultCode.NO_COMIC_ID.getCode(),
-                        ResultCode.NO_COMIC_ID.getMessage()
-                ));
-        java.util.Map<String, Object> result = new java.util.HashMap<>();
-        result.put("averageRating", comic.getAvrRating());
-        comicRatingRepository.findByUserAndComic(user, comic)
-                .ifPresent(r -> result.put("userRating", r.getRating()));
-        return result;
+        Comic comic = retriveComic(comicId);
+        Float userRating = comicRatingRepository.findByUserAndComic(user, comic)
+                .map(ComicRating::getRating)
+                .orElse(null);
+        return new UserRatingRes(comic.getAvrRating(), userRating);
     }
 }

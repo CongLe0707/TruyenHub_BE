@@ -29,7 +29,7 @@ public class ExceptionController {
     public ResponseEntity<CommonRes<?>> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
         log.error("{}", MethodArgumentNotValidException.class.getSimpleName(), ex);
         String message = ex.getBindingResult().getFieldErrors().stream()
-                .map(error -> error.getField() + " " + error.getDefaultMessage())
+                .map(error -> error.getDefaultMessage())
                 .findFirst()
                 .orElse(ResultCode.VALIDATION_ERROR.getMessage());
         BaseException exception = new BaseException(ResultCode.VALIDATION_ERROR.getCode(), message);

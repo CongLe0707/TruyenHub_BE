@@ -10,7 +10,7 @@ public interface CategoryService {
 
     CategoryRes editCategory (CommonReq<EditCategoryReq> req);
 
-    void deleteCategory (java.util.UUID id);
+    String deleteCategory (java.util.UUID id);
 
     java.util.List<CategoryRes> listCategory();
 }

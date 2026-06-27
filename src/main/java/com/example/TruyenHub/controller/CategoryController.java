@@ -35,10 +35,7 @@ public class CategoryController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<CommonRes> deleteCategory(@PathVariable java.util.UUID id) {
-        return ApiHandler.handle(new CommonReq<>(), req -> {
-            categoryService.deleteCategory(id);
-            return "Deleted successfully";
-        });
+        return ApiHandler.handle(id, categoryService::deleteCategory);
     }
 
 

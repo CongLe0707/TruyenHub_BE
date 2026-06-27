@@ -1,6 +1,5 @@
 package com.example.TruyenHub.controller;
 
-import com.example.TruyenHub.dto.req.CommonReq;
 import com.example.TruyenHub.dto.req.CreateStoryReq;
 import com.example.TruyenHub.dto.res.CommonRes;
 import com.example.TruyenHub.service.StoryService;
@@ -21,7 +20,7 @@ public class StoryController {
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CommonRes> createNovel(@ModelAttribute CreateStoryReq req) {
-        return ApiHandler.handle(new CommonReq<>(req), storyService::createNovel);
+        return ApiHandler.handle(req, storyService::createNovel);
     }
 
     @GetMapping("/list")
@@ -36,14 +35,11 @@ public class StoryController {
 
     @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CommonRes> editStory(@ModelAttribute com.example.TruyenHub.dto.req.EditStoryReq req) {
-        return ApiHandler.handle(new CommonReq<>(req), storyService::editStory);
+        return ApiHandler.handle(req, storyService::editStory);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<CommonRes> deleteStory(@PathVariable UUID id) {
-        return ApiHandler.handle(new CommonReq<>(), req -> {
-            storyService.deleteStory(id);
-            return "Deleted successfully";
-        });
+        return ApiHandler.handle(id, storyService::deleteStory);
     }
 }

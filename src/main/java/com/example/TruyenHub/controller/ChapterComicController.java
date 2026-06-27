@@ -1,6 +1,5 @@
 package com.example.TruyenHub.controller;
 
-import com.example.TruyenHub.dto.req.CommonReq;
 import com.example.TruyenHub.dto.req.CreateChapterComicReq;
 import org.springframework.http.MediaType;
 
@@ -21,12 +20,12 @@ public class ChapterComicController {
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CommonRes> createChapterComic(@ModelAttribute CreateChapterComicReq req) {
-        return ApiHandler.handle(new CommonReq<>(req), chapterComicService::createChapterComic);
+        return ApiHandler.handle(req, chapterComicService::createChapterComic);
     }
 
     @GetMapping("/detail/{chapterId}")
     public ResponseEntity<CommonRes> getChapterDetail(@PathVariable UUID chapterId) {
-        return ApiHandler.handle(null, req -> chapterComicService.detailChapterComic(chapterId));
+        return ApiHandler.handle(chapterId, chapterComicService::detailChapterComic);
     }
 
 

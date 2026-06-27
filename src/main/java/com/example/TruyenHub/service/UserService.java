@@ -11,5 +11,6 @@ public interface UserService {
     RegisterUserRes registerUser(CommonReq<RegisterUserReq> req);
 
     LoginRes login(CommonReq<LoginReq> req);
+    String logout(String authorization);
 
 }

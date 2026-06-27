@@ -29,13 +29,12 @@ public class CommentController {
 
     @GetMapping("/story/{id}")
     public ResponseEntity<CommonRes> getStoryComments(@PathVariable UUID id) {
-        var data = commentService.getStoryComments(id);
-        return ResponseEntity.ok(new CommonRes<>(data));
+
+        return ApiHandler.handle(id, req -> commentService.getStoryComments(id));
     }
 
     @GetMapping("/comic/{id}")
     public ResponseEntity<CommonRes> getComicComments(@PathVariable UUID id) {
-        var data = commentService.getComicComments(id);
-        return ResponseEntity.ok(new CommonRes<>(data));
+        return ApiHandler.handle(id, req -> commentService.getComicComments(id));
     }
 }

@@ -10,6 +10,8 @@ import com.example.TruyenHub.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public  class AuthorServiceImpl implements AuthorService {
         );
     }
     @Override
-    public java.util.List<AuthorRes> listAuthor() {
+    public List<AuthorRes> listAuthor() {
         return authorRepository.findAll().stream()
                 .map(author -> new AuthorRes(author.getId(), author.getName(), author.getBio()))
                 .toList();

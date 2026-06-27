@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -56,19 +57,20 @@ public class CategoryServiceImpl implements CategoryService {
      return categoryRepository.findById(id)
              .orElseThrow(() -> new DelegationServiceException(
                      ResultCode.ID_NOT_FOUND.getCode(),
-                     ResultCode.ID_NOT_FOUND.getMessage().formatted(id)
+                     ResultCode.ID_NOT_FOUND.getMessage()
              ));
     }
 
     @Override
     @Transactional
-    public void deleteCategory(UUID id) {
+    public String deleteCategory(UUID id) {
         Category category = retriveCategory(id);
         categoryRepository.delete(category);
+        return ResultCode.DELETE_CATEGORY.getMessage();
     }
 
     @Override
-    public java.util.List<CategoryRes> listCategory() {
+    public List<CategoryRes> listCategory() {
         return categoryRepository.findAll().stream()
                 .map(category -> new CategoryRes(category.getId(), category.getName(), category.getDescription()))
                 .toList();

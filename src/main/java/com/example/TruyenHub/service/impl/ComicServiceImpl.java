@@ -47,12 +47,7 @@ public class ComicServiceImpl implements ComicService {
     private String uploadDir;
 
     @Override
-    public CreateComicRes createComic(CommonReq<CreateComicReq> req) {
-
-
-
-
-        CreateComicReq data = req.getData();
+    public CreateComicRes createComic(CreateComicReq data) {
 
         Author author = retriveAuthor(data.authorName());
 
@@ -80,7 +75,6 @@ public class ComicServiceImpl implements ComicService {
 
 //Chi tiết truyện
     @Override
-    @Transactional
     public DetailComicRes detailComic(UUID comicId) {
 
         Comic comic = retriveComic(comicId);
@@ -171,9 +165,7 @@ public class ComicServiceImpl implements ComicService {
     }
     
     @Override
-    @Transactional
-    public CreateComicRes editComic(CommonReq<com.example.TruyenHub.dto.req.EditComicReq> req) {
-        com.example.TruyenHub.dto.req.EditComicReq data = req.getData();
+    public CreateComicRes editComic(com.example.TruyenHub.dto.req.EditComicReq data) {
         Comic comic = retriveComic(data.id());
 
         Author author = retriveAuthor(data.authorName());
@@ -200,10 +192,10 @@ public class ComicServiceImpl implements ComicService {
     }
 
     @Override
-    @Transactional
-    public void deleteComic(UUID id) {
+    public String deleteComic(UUID id) {
         Comic comic = retriveComic(id);
         comicRepository.delete(comic);
+        return ResultCode.DELETE_CATEGORY.getMessage();
     }
 
 }

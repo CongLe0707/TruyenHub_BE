@@ -12,6 +12,7 @@ import com.example.TruyenHub.model.entity.User;
 import com.example.TruyenHub.model.enums.ResultCode;
 import com.example.TruyenHub.outfras.repo.UserRepository;
 import com.example.TruyenHub.outfras.repo.RefreshTokenRepository;
+import com.example.TruyenHub.service.RedisBlacklistService;
 import com.example.TruyenHub.service.UserService;
 import com.example.TruyenHub.utils.Constants;
 import com.example.TruyenHub.utils.JwtUtils;
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisBlacklistService redisBlacklistService;
 
 
     @Override
@@ -53,7 +55,6 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-    @Transactional
     @Override
     public LoginRes login(CommonReq<LoginReq> req) {
         LoginReq data = req.getData();
@@ -77,6 +78,15 @@ public class UserServiceImpl implements UserService {
                 refreshToken.getToken(),
                 user.getRole().name()
         );
+    }
+
+    @Override
+    public String logout(String authorization) {
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String token = authorization.substring(7);
+            redisBlacklistService.blacklistToken(token, Constants.ACCESS_TOKEN_TTL_SECONDS);
+        }
+        return ResultCode.LOG_OUT.getMessage();
     }
 
 

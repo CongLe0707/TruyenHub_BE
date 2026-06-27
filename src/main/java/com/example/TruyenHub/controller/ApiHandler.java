@@ -13,7 +13,7 @@ import java.util.function.Function;
 @Slf4j
 public class ApiHandler {
 
-    public <T, K> ResponseEntity<CommonRes> handle(CommonReq<T> req, Function<CommonReq<T>, K> function) {
+    public <T, K> ResponseEntity<CommonRes> handle(T req, Function<T, K> function) {
         log.info("API request: {}", Utils.object2Json(req));
         var rsData = function.apply(req);
         var commonRes = new CommonRes<>(rsData);

@@ -29,13 +29,11 @@ public class RatingController {
 
     @GetMapping("/story/{id}")
     public ResponseEntity<CommonRes> getUserStoryRating(@PathVariable UUID id) {
-        var data = ratingService.getUserStoryRating(id);
-        return ResponseEntity.ok(new CommonRes<>(data));
+        return ApiHandler.handle(id,ratingService::getUserStoryRating);
     }
 
     @GetMapping("/comic/{id}")
     public ResponseEntity<CommonRes> getUserComicRating(@PathVariable UUID id) {
-        var data = ratingService.getUserComicRating(id);
-        return ResponseEntity.ok(new CommonRes<>(data));
+        return ApiHandler.handle(id,ratingService::getUserComicRating);
     }
 }

@@ -13,6 +13,8 @@ public class CommonReq <T> {
 
     private String requestId;
     private String requestTime;
+    
+    @jakarta.validation.Valid
     private T data;
 
     public CommonReq(T data) {

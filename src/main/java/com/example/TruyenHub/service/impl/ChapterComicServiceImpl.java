@@ -40,8 +40,7 @@ public class ChapterComicServiceImpl implements ChapterComicService {
 
     @Override
     @org.springframework.transaction.annotation.Transactional
-    public CreateChapterComicRes createChapterComic(CommonReq<CreateChapterComicReq> req) {
-        CreateChapterComicReq data = req.getData();
+    public CreateChapterComicRes createChapterComic(CreateChapterComicReq data) {
 
         Comic comic = comicRepository.findByTitle(data.comicName())
                 .orElseThrow(() -> new DelegationServiceException(
